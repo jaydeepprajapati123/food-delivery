@@ -1,10 +1,12 @@
 import express from "express";
-import { DB_URL } from "./config";
 import router from "./routes";
 import { ErrorHandler } from "./middlewares";
 
 import mongoose from "mongoose";
-mongoose.connect("mongodb+srv://jaydeep:jaydeep1153@cluster0.9l1hv.mongodb.net/food_delivery?retryWrites=true&w=majority").then(()=> console.log("database connected....")).catch((error)=> console.log('err:- ',error));
+
+// const URI='mongodb+srv://jaydeep:jaydeep1153@cluster0.9l1hv.mongodb.net/food_delivery?retryWrites=true&w=majority';
+// const url = process.env.URI;
+mongoose.connect("mongodb+srv://jaydeep:jaydeep1153@cluster0.9l1hv.mongodb.net/food_delivery?retryWrites=true&w=majority",{useNewUrlParser: true}).then(()=> console.log("database connected....")).catch((error)=> console.log('err:- ',error));
 
 const app = express();
 
