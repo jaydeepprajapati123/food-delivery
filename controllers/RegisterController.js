@@ -20,7 +20,6 @@ const RegisterController = {
 
         //duplication email or user error checking
         try {
-
             const exist = await User.findOne({$or:[{ userId },{ email }]});
 
             if(exist != null){
@@ -32,6 +31,7 @@ const RegisterController = {
             }
             
         } catch (error) {
+            console.log(error);
             return next(error);
         }
 

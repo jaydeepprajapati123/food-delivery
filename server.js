@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 
 // const URI='mongodb+srv://jaydeep:jaydeep1153@cluster0.9l1hv.mongodb.net/food_delivery?retryWrites=true&w=majority';
 // const url = process.env.URI;
-mongoose.connect("mongodb+srv://jaydeep:jaydeep1153@cluster0.9l1hv.mongodb.net/food_delivery?retryWrites=true&w=majority",{useNewUrlParser: true}).then(()=> console.log("database connected....")).catch((error)=> console.log('err:- ',error));
+mongoose.connect(process.env.DB_PORT,{useNewUrlParser: true}).then(()=> console.log("database connected....")).catch((error)=> console.log('err:- ',error));
 
 const app = express();
 
