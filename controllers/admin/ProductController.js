@@ -10,7 +10,7 @@ const ProductController = {
         let match, save;
         console.log(req.body);
 
-        const {product_name, product_desc, image, categoryId, restaurantId, varients, rating } = req.body;
+        const {product_name, product_desc, image, categoryId, restaurantId, varients, recommended, rating } = req.body;
 
         if(!restaurantId){
             return next(CustomErrorHandler.NotValid("restaurantId is Required Field"));
@@ -55,7 +55,7 @@ const ProductController = {
          // save in collection
          
         const product = new Product({
-            product_name, product_desc, image, categoryId, restaurantId, varients, rating
+            product_name, product_desc, image, categoryId, restaurantId, varients, recommended, rating
         });
 
         try{
@@ -70,6 +70,47 @@ const ProductController = {
             message: "Product Added Successfully!",
             data: save
         });
+    },
+
+
+    async recommendedProduct(req, res, next){
+
+        let data;
+
+        try{
+
+            data = await Product.find({recommended: true});
+            
+        } catch(error){
+            return next(error);
+        }
+
+
+        return res.status(200).json({
+            status: 1,
+            data
+        });
+    },
+
+
+    async allProduct(req, res, next){
+
+        let data;
+
+        try{
+
+            data = await Product.find();
+
+        } catch(error){
+            return next(error);
+        }
+
+
+        return res.status(200).json({
+            status: 1,
+            data
+        });
+        
     },
 
 
@@ -105,6 +146,10 @@ const ProductController = {
                     }
                 }
             ]);
+
+            if(data == ''){
+                return next(CustomErrorHandler.NotFound("Product not Found"));
+            }
         } catch(error){
             return next(error);
         }
@@ -137,7 +182,8 @@ const ProductController = {
 
         try{
             data = await Product.find({categoryId: catId});
-            if(!data){
+            console.log(data);
+            if(data == ''){
                 return next(CustomErrorHandler.NotFound("Product not Found"));
             }
         } catch(error){

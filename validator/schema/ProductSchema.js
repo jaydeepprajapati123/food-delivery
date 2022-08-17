@@ -12,7 +12,8 @@ const ProductSchema = Joi.object({
     extra: Joi.array(),
     name: Joi.string(),
     rate: Joi.number(),
-    rating: Joi.number()
+    rating: Joi.number(),
+    recommended: Joi.boolean()
 });
 
 

@@ -33,6 +33,8 @@ router.delete("/product/category/remove",CategoryController.removeCategory);
 router.post("/product/add",ProductController.addProduct);
 router.get("/product/search",ProductController.searchProduct);
 router.get("/product/filter",ProductController.filterProduct);
+router.get("/product/recommended",ProductController.recommendedProduct);
+router.get("/product/all",ProductController.allProduct);
 
 
 //coupon api

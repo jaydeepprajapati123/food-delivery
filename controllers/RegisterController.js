@@ -37,7 +37,7 @@ const RegisterController = {
 
         // save in collection
         const user = new User({
-            userId,
+            _id: userId,
             // name,
             email,
             // phone,
