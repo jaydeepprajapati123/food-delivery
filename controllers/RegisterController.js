@@ -16,7 +16,7 @@ const RegisterController = {
             return next(error);
         }
 
-        const { userId, name, email, phone, userImg, notification_token } = req.body;
+        const { userId, email, notification_token } = req.body;
 
         //duplication email or user error checking
         try {
@@ -25,9 +25,6 @@ const RegisterController = {
             if(exist != null){
                 console.log(exist);
                 return next(CustomErrorHandler.AlreadyExist("User Already Registered"));
-                // if (exist[0].email == email) {
-                //     return next(CustomErrorHandler.AlreadyExist("Email Already Registered"));
-                // }
             }
             
         } catch (error) {
@@ -38,10 +35,7 @@ const RegisterController = {
         // save in collection
         const user = new User({
             _id: userId,
-            // name,
             email,
-            // phone,
-            // userImg,
             notificationToken: notification_token
         });
 
