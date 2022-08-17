@@ -6,7 +6,7 @@ import { DB_PORT } from "./config";
 import mongoose from "mongoose";
 
 // const MONGO = process.env.DB_PORT || DB_PORT;
-mongoose.connect(process.env.DB_PORT || DB_PORT,{useNewUrlParser: true}).then(()=> console.log("database connected....")).catch((error)=> console.log('err:- ',error));
+mongoose.connect(process.env.DB_PORT,{useNewUrlParser: true}).then(()=> console.log("database connected....")).catch((error)=> console.log('err:- ',error));
 
 const app = express();
 
