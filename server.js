@@ -5,9 +5,8 @@ import { DB_PORT } from "./config";
 
 import mongoose from "mongoose";
 
-// const URI='mongodb+srv://jaydeep:jaydeep1153@cluster0.9l1hv.mongodb.net/food_delivery?retryWrites=true&w=majority';
-const MONGO = process.env.DB_PORT || DB_PORT;
-mongoose.connect(MONGO,{useNewUrlParser: true}).then(()=> console.log("database connected....")).catch((error)=> console.log('err:- ',error));
+// const MONGO = process.env.DB_PORT || DB_PORT;
+mongoose.connect(process.env.DB_PORT || DB_PORT,{useNewUrlParser: true}).then(()=> console.log("database connected....")).catch((error)=> console.log('err:- ',error));
 
 const app = express();
 
