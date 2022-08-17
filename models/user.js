@@ -3,10 +3,10 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
     userId: { type: String, required: true },
-    name: { type: String, required: true },
+    name: { type: String },
     email: { type: String, required: true },
-    phone: { type: Number, required: true },
-    userImg: { type: String, required: true },
+    phone: { type: Number },
+    userImg: { type: String },
     wallet: {
         balance:{ type: Number, default: 0 } 
     },

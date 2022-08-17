@@ -38,10 +38,10 @@ const RegisterController = {
         // save in collection
         const user = new User({
             userId,
-            name,
+            // name,
             email,
-            phone,
-            userImg,
+            // phone,
+            // userImg,
             notificationToken: notification_token
         });
 
