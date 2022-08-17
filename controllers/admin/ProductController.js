@@ -79,7 +79,7 @@ const ProductController = {
 
         try{
 
-            data = await Product.find({recommended: true});
+            data = await Product.find({recommended: true}).select("-createdAt -updatedAt -__v");
             
         } catch(error){
             return next(error);
@@ -99,7 +99,7 @@ const ProductController = {
 
         try{
 
-            data = await Product.find();
+            data = await Product.find().select("-createdAt -updatedAt -__v").sort("categoryId");
 
         } catch(error){
             return next(error);
@@ -110,7 +110,7 @@ const ProductController = {
             status: 1,
             data
         });
-        
+
     },
 
 
@@ -143,6 +143,13 @@ const ProductController = {
                 {
                     $sort: {
                         _id: 1
+                    }
+                },
+                {
+                    $project:{
+                        createdAt:0,
+                        updatedAt:0,
+                        __v:0
                     }
                 }
             ]);
@@ -181,11 +188,11 @@ const ProductController = {
         }
 
         try{
-            data = await Product.find({categoryId: catId});
-            console.log(data);
+            data = await Product.find({categoryId: catId}).select("-createdAt -updatedAt -__v");
             if(data == ''){
                 return next(CustomErrorHandler.NotFound("Product not Found"));
             }
+
         } catch(error){
             return next(error);
         }

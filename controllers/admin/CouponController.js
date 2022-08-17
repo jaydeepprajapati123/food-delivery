@@ -52,7 +52,6 @@ const CouponController = {
         }
 
          // save in collection
-         const data = req.body
          const coupon = new Coupon({
             coupon_name,
             coupon_desc,
@@ -91,7 +90,7 @@ const CouponController = {
         let coupon;
         try{
 
-            coupon = await Coupon.find();
+            coupon = await Coupon.find().select("-createdAt -updatedAt -__v");
 
         } catch(error){
             return next(error);
@@ -123,7 +122,7 @@ const CouponController = {
 
          // remove from collection
          try{
-            find = await Coupon.findOne({_id: couponId});
+            find = await Coupon.findOne({_id: couponId}).select("-createdAt -updatedAt -__v");
 
             if(!find){
                 return next(CustomErrorHandler.NotFound("Coupon not Found"));

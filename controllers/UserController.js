@@ -10,7 +10,7 @@ const UserController = {
 
         if (userId) {
             try {
-                result = await User.findOne({ userId }).select("-password -updatedAt -__v");
+                result = await User.findOne({ _id: userId }).select("-createdAt -updatedAt -__v");
                 if (!result) {
                     return next( CustomErrorHandler.NotFound("No User Available With This ID") );
                 }
@@ -45,12 +45,12 @@ const UserController = {
 
         try{
 
-            push = await User.findOneAndUpdate({ userId },{ $addToSet: { notificationToken: notification_token } });
+            push = await User.findOneAndUpdate({ _id: userId },{ $addToSet: { notificationToken: notification_token } });
             if(!push){
                 return next(CustomErrorHandler.NotFound("No User Available With This ID."));
             }
 
-            fetch = await User.findOne({ userId });
+            fetch = await User.findOne({ _id: userId }).select("-createdAt -updatedAt -__v");
 
         } catch(error){
             console.log("err1",error);
@@ -71,58 +71,52 @@ const UserController = {
         const userId = req.body.userId;
         let update,new_data;
 
-        if (userId) {
-
-                //validation of input fields
-                const { error } = UpdateUserSchema.validate(req.body);
-                if (error) {
-                    console.log(error);
-                    return next(error);
-                } 
-
-                //Duplicate email checking
-                if(req.body.email){
-                    try {
-                        const exist = await User.exists({ $and: [{ userId: { $ne: userId } }, { email: req.body.email }] });
-
-                        if (exist) {
-                            return next(
-                                CustomErrorHandler.AlreadyExist("Email Already Registered")
-                            );
-                        }
-                    } catch (error) {
-                        return next(error);
-                    }
-                }
-
-                // remove userId from req.body as we don`t want to update it.
-                delete req.body['userId'];
-
-                // save data in database 
-                try {
-                    update = await User.findOneAndUpdate({ userId: userId }, req.body);
-                    if (!update) {
-                        return next(
-                            CustomErrorHandler.NotFound("No User Available With This ID.")
-                        );
-                    }
-
-                    try{
-                        new_data = await User.findOne({ userId });
-                    }catch(err){
-                        console.log("err", err.message);
-                        return next(err.message);
-                    }
-                    
-                    console.log(new_data);
-                } catch (err) {
-                    console.log("err", err.message);
-                    return next(err.message);
-                }
-
-        } else {
+        if (!userId) {
             return next(CustomErrorHandler.NotValid("userId is Required Field"));
         }
+
+        //validation of input fields
+        const { error } = UpdateUserSchema.validate(req.body);
+        if (error) {
+            console.log(error);
+            return next(error);
+        } 
+
+        //Duplicate email checking
+        if(req.body.email){
+            try {
+                const exist = await User.exists({ $and: [{ _id: { $ne: userId } }, { email: req.body.email }] });
+
+                if (exist) {
+                    return next(
+                        CustomErrorHandler.AlreadyExist("Email Already Registered")
+                    );
+                }
+            } catch (error) {
+                return next(error);
+            }
+        }
+
+        // remove userId from req.body as we don`t want to update it.
+        delete req.body['userId'];
+
+        // save data in database 
+        try {
+            update = await User.findOneAndUpdate({ _id: userId }, req.body);
+            if (!update) {
+                return next(
+                    CustomErrorHandler.NotFound("No User Available With This ID.")
+                );
+            }
+            
+            new_data = await User.findOne({ _id: userId }).select("-createdAt -updatedAt -__v");
+            
+            console.log(new_data);
+        } catch (err) {
+            console.log("err", err.message);
+            return next(err.message);
+        }
+
 
         res.status(200).json({
             status: 1,
@@ -173,7 +167,7 @@ const UserController = {
             // check if this type of address already exist
             try {
                 
-                const exist = await User.findOne({userId});
+                const exist = await User.findOne({ _id: userId });
                 const address = exist.address;
 
                 address.forEach(address => {
@@ -181,7 +175,6 @@ const UserController = {
                         isType = true;
                     }
                 });
-                console.log(exist.address.length);
 
             } catch (err) {
                 console.log("err", err.message);
@@ -196,12 +189,12 @@ const UserController = {
                     return next(CustomErrorHandler.AlreadyExist(`Address type ${type} already exist.`));
                 }
         
-                add = await User.findOneAndUpdate({ userId },{ $push: { address }});
+                add = await User.findOneAndUpdate({ _id: userId },{ $push: { address }});
                 if (!add) {
                     return next(CustomErrorHandler.NotFound("No User Available With This ID."));
                 }
 
-                fetch = await User.findOne({userId});
+                fetch = await User.findOne({ _id: userId }).select("-createdAt -updatedAt -__v");
 
             }catch(err){
                 console.log("err", err.message);
@@ -265,7 +258,7 @@ const UserController = {
             // check if this type of address already exist
             try {
                 
-                const exist = await User.findOne({userId});
+                const exist = await User.findOne({ _id: userId });
                 const address = exist.address;
 
                 address.forEach(address => {
@@ -273,7 +266,6 @@ const UserController = {
                         isType = true;
                     }
                 });
-                console.log(exist.address.length);
 
             } catch (err) {
                 console.log("err", err.message);
@@ -287,18 +279,18 @@ const UserController = {
                 if(isType == true){
 
                     // remove existing array
-                    remove = await User.findOneAndUpdate({ userId },{ $pull: { address: { type }}});
+                    remove = await User.findOneAndUpdate({ _id: userId },{ $pull: { address: { type }}});
                     if(!remove){
                         console.log("error occure when remove old array");
                     } 
         
-                    update = await User.findOneAndUpdate({ userId },{ $push: { address }});
+                    update = await User.findOneAndUpdate({ _id: userId },{ $push: { address }});
                     if (!update) {
                         return next(CustomErrorHandler.NotFound("No User Available With This ID."));
                     }
                     console.log(update);
 
-                    fetch = await User.findOne({userId});
+                    fetch = await User.findOne({ _id: userId }).select("-createdAt -updatedAt -__v");
 
                 } else{
                     return next(CustomErrorHandler.NotAllowed(`Update Failed. can't Update Unknown Type of Address. `));
@@ -347,12 +339,12 @@ const UserController = {
             try{
 
                 // remove existing array
-                remove = await User.findOneAndUpdate({ userId },{ $pull: { address: { type }}});
+                remove = await User.findOneAndUpdate({ _id: userId },{ $pull: { address: { type }}});
                 if(!remove){
                     console.log("error occure when remove old array");
                 } 
 
-                fetch = await User.findOne({userId});
+                fetch = await User.findOne({ _id: userId }).select("-createdAt -updatedAt -__v");
 
             } catch(err){
                 return next(err.message);

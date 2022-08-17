@@ -97,7 +97,7 @@ const RestaurantController = {
 
             console.log(update);
 
-            fetch = await Restaurant.findOne({ _id : resId });
+            fetch = await Restaurant.findOne({ _id : resId }).select("-createdAt -updatedAt -__v");
 
         }catch(err){
             console.log("err", err.message);
@@ -155,7 +155,7 @@ const RestaurantController = {
 
                     console.log(update);
 
-                    fetch = await Restaurant.findOne({ _id : resId });
+                    fetch = await Restaurant.findOne({ _id : resId }).select("-createdAt -updatedAt -__v");
 
                 }catch(err){
                     console.log("err", err.message);
@@ -243,7 +243,7 @@ const RestaurantController = {
                 add = await Restaurant.findOneAndUpdate({ _id: resId },{ $push: { time: req.body }});
             }
 
-            fetch = await Restaurant.findOne({ _id: resId});
+            fetch = await Restaurant.findOne({ _id: resId}).select("-createdAt -updatedAt -__v");
 
         } catch (err) {
             console.log("err4", err.message);
@@ -286,11 +286,11 @@ const RestaurantController = {
         try{
 
             charge = await Restaurant.findOneAndUpdate({ _id: resId },{ delivery_charge: req.body });
-            if(charge){
-                fetch = await Restaurant.find({ _id: resId });
-            } else{
+            if(!charge){
                 return next(CustomErrorHandler.NotValid("Invalid Restaurant ID."));
             }
+
+            fetch = await Restaurant.find({ _id: resId }).select("-createdAt -updatedAt -__v");
 
         }catch(error){
             return next(error);
@@ -330,11 +330,10 @@ const RestaurantController = {
 
             status = await Restaurant.findOneAndUpdate({ _id: resId },{ isOpen: open });
             if(status){
-                fetch = await Restaurant.find({ _id: resId });
-            } else{
                 return next(CustomErrorHandler.NotValid("Invalid Restaurant ID."));
             }
 
+            fetch = await Restaurant.find({ _id: resId }).select("-createdAt -updatedAt -__v");
         }catch(error){
             return next(error);
         }

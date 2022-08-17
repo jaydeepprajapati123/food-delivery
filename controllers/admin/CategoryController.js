@@ -85,7 +85,7 @@ const CategoryController = {
                 return next(CustomErrorHandler.NotFound("Category not Found"));
             }
 
-            fetch = await Category.findOne({_id: catId});
+            fetch = await Category.findOne({_id: catId}).select("-createdAt -updatedAt -__v");
         }catch(error){
             return next(error);
         }
@@ -117,7 +117,7 @@ const CategoryController = {
 
         // get single category from collection
         try{
-            find = await Category.findOne({_id: catId});
+            find = await Category.findOne({_id: catId}).select("-createdAt -updatedAt -__v");
 
             if(!find){
                 return next(CustomErrorHandler.NotFound("Category not Found"));
@@ -153,7 +153,7 @@ const CategoryController = {
 
         // get all category from collection
         try{
-            find = await Category.find({restaurantId: resId});
+            find = await Category.find({restaurantId: resId}).select("-createdAt -updatedAt -__v");
 
             if(!find){
                 return next(CustomErrorHandler.NotFound("Category not Found"));

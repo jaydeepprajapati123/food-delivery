@@ -20,7 +20,8 @@ const RegisterController = {
 
         //duplication email or user error checking
         try {
-            const exist = await User.findOne({$or:[{ userId },{ email }]});
+            console.log(userId);
+            const exist = await User.findOne({$or:[{ _id: userId },{ email }]});
 
             if(exist != null){
                 console.log(exist);
