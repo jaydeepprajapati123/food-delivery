@@ -25,6 +25,7 @@ router.post("/restaurant/status",RestaurantController.status);
 router.post("/product/category/add",CategoryController.addCategory);
 router.post("/product/category/update",CategoryController.updateCategory);
 router.get("/product/category",CategoryController.Category);
+router.get("/product/category/filter",CategoryController.filterCategory);
 router.get("/product/category/all",CategoryController.allCategory);
 router.delete("/product/category/remove",CategoryController.removeCategory);
 

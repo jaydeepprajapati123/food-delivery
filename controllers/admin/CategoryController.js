@@ -136,7 +136,7 @@ const CategoryController = {
     },
 
 
-    async allCategory(req, res, next){
+    async filterCategory(req, res, next){
 
         let find;
         const resId = req.query.resId;
@@ -154,6 +154,31 @@ const CategoryController = {
         // get all category from collection
         try{
             find = await Category.find({restaurantId: resId}).select("-createdAt -updatedAt -__v");
+
+            if(!find){
+                return next(CustomErrorHandler.NotFound("Category not Found"));
+            }
+
+        }catch(error){
+            return next(error);
+        }
+
+
+        return res.status(200).json({
+            status: 1,
+            data: find
+        });
+
+    },
+
+
+    async allCategory(req, res, next){
+
+        let find;
+
+        // get all category from collection
+        try{
+            find = await Category.find().select("-createdAt -updatedAt -__v");
 
             if(!find){
                 return next(CustomErrorHandler.NotFound("Category not Found"));
