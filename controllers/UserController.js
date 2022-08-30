@@ -240,9 +240,9 @@ const UserController = {
             // save data in database 
             try{
                     // remove existing array
-                    remove = await User.findOneAndUpdate({ _id: userId,  },{ $pull: { address: { add_id: addressId }}});
+                    remove = await User.findOneAndUpdate({ _id: userId },{ $pull: { address: { add_id: addressId }}});
                     if(!remove){
-                        console.log("error occure when remove old array");
+                        return next(CustomErrorHandler.NotFound("No User Available With This ID."));
                     } 
         
                     update = await User.findOneAndUpdate({ _id: userId },{ $push: { address }});
