@@ -3,6 +3,7 @@ import { CustomErrorHandler } from "../services";
 import { UpdateUserSchema, AddressSchema} from "../validator";
 
 const UserController = {
+
     async user(req,res,next){
 
         let result;
@@ -81,12 +82,12 @@ const UserController = {
             console.log(error);
             return next(error);
         } 
-
+        
         //Duplicate email checking
         if(req.body.email){
             try {
                 const exist = await User.exists({ $and: [{ _id: { $ne: userId } }, { email: req.body.email }] });
-
+                
                 if (exist) {
                     return next(
                         CustomErrorHandler.AlreadyExist("Email Already Registered")
@@ -153,8 +154,11 @@ const UserController = {
                 return next(CustomErrorHandler.NotAllowed(`type ${type} is not allowed. Value of 'type' should be of Home, Office and Other.`));
             }
 
+            const add_id = Math.floor(Math.random()*(9999999999-100000000+1)+100000000);
+
             // make object named address
             const address = {
+                add_id,
                 type,
                 line,
                 locality,
@@ -164,30 +168,8 @@ const UserController = {
             }
 
 
-            // check if this type of address already exist
-            try {
-                
-                const exist = await User.findOne({ _id: userId });
-                const address = exist.address;
-
-                address.forEach(address => {
-                    if(type == address.type){
-                        isType = true;
-                    }
-                });
-
-            } catch (err) {
-                console.log("err", err.message);
-                return next(err.message);
-            }
-
-
             // save data in database 
             try{
-
-                if(isType == true){
-                    return next(CustomErrorHandler.AlreadyExist(`Address type ${type} already exist.`));
-                }
         
                 add = await User.findOneAndUpdate({ _id: userId },{ $push: { address }});
                 if (!add) {
@@ -231,10 +213,10 @@ const UserController = {
                 return next(error);
             } 
 
-            const {type, line, locality, city, state, pincode } = req.body;
+            const {addressId, type, line, locality, city, state, pincode } = req.body;
 
-            if(!type){
-                return next(CustomErrorHandler.NotValid(" 'type' is Required Field"));
+            if(!addressId){
+                return next(CustomErrorHandler.NotValid(" 'addressId' is Required Field"));
             }
 
             // check address type
@@ -246,6 +228,7 @@ const UserController = {
 
             // make object named address
             const address = {
+                add_id: addressId,
                 type,
                 line,
                 locality,
@@ -254,32 +237,10 @@ const UserController = {
                 pincode
             }
 
-
-            // check if this type of address already exist
-            try {
-                
-                const exist = await User.findOne({ _id: userId });
-                const address = exist.address;
-
-                address.forEach(address => {
-                    if(type == address.type){
-                        isType = true;
-                    }
-                });
-
-            } catch (err) {
-                console.log("err", err.message);
-                return next(err.message);
-            }
-
-
             // save data in database 
             try{
-
-                if(isType == true){
-
                     // remove existing array
-                    remove = await User.findOneAndUpdate({ _id: userId },{ $pull: { address: { type }}});
+                    remove = await User.findOneAndUpdate({ _id: userId,  },{ $pull: { address: { add_id: addressId }}});
                     if(!remove){
                         console.log("error occure when remove old array");
                     } 
@@ -291,12 +252,6 @@ const UserController = {
                     console.log(update);
 
                     fetch = await User.findOne({ _id: userId }).select("-createdAt -updatedAt -__v");
-
-                } else{
-                    return next(CustomErrorHandler.NotAllowed(`Update Failed. can't Update Unknown Type of Address. `));
-                }
-                
-                
 
             }catch(err){
                 console.log("err", err.message);

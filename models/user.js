@@ -13,6 +13,7 @@ const userSchema = new Schema({
     address:{
         type: Array,
         items:{
+            add_id:{ type: String, required: true },
             type:{ type: String},
             line1:{ type: String},
             locality:{ type: String},
