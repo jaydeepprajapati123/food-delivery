@@ -154,7 +154,7 @@ const UserController = {
                 return next(CustomErrorHandler.NotAllowed(`type ${type} is not allowed. Value of 'type' should be of Home, Office and Other.`));
             }
 
-            const add_id = Math.floor(Math.random()*(9999999999-100000000+1)+100000000);
+            const add_id = Math.floor(Math.random()*(9999999999-100000000+1)+100000000).toString();
 
             // make object named address
             const address = {
