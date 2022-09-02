@@ -1,6 +1,6 @@
 import { User } from "../models";
 import { CustomErrorHandler } from "../services";
-import { UpdateUserSchema, AddressSchema} from "../validator";
+import { UpdateUserSchema, AddressSchema, UserRegisterSchema} from "../validator";
 
 const UserController = {
 
@@ -38,7 +38,7 @@ const UserController = {
 
         
         //validation of input fields
-        const { error } = UpdateUserSchema.validate(req.body);
+        const { error } = UserRegisterSchema.validate(req.body);
         if (error) {
             console.log("err",error);
             return next(error);
