@@ -276,27 +276,19 @@ const UserController = {
 
         let remove, fetch;
         const userId = req.query.userId;
-        const type = req.query.address_type;
+        const addressId = req.query.addressId;
 
         if(userId){
 
-            if(!type){
-                return next(CustomErrorHandler.NotValid(" `address_type` is Required Field"));
-            }
-
-            // check address type
-            const all_types = ['Home','Office','Other'];
-            const inside = all_types.includes(type);
-            if(inside != true){
-                return next(CustomErrorHandler.NotAllowed(`type ${type} is not allowed. Value of 'type' should be of Home, Office and Other.`));
+            if(!addressId){
+                return next(CustomErrorHandler.NotValid(" `addressId` is Required Field"));
             }
 
             try{
-
                 // remove existing array
-                remove = await User.findOneAndUpdate({ _id: userId },{ $pull: { address: { type }}});
+                remove = await User.findOneAndUpdate({ _id: userId },{ $pull: { address: { add_id: addressId }}});
                 if(!remove){
-                    console.log("error occure when remove old array");
+                    return next(CustomErrorHandler.NotValid(" `addressId` is not available for this userId"));
                 } 
 
                 fetch = await User.findOne({ _id: userId }).select("-createdAt -updatedAt -__v");
