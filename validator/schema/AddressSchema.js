@@ -2,7 +2,7 @@ import Joi from "joi";
 
 const AddressSchema = Joi.object({
     userId: Joi.string(),
-    addressId: Joi.number(),
+    addressId: Joi.string(),
     resId: Joi.string(),
     type: Joi.string().required(),
     line: Joi.string().required(),

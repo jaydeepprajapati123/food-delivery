@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { User } from "../models";
 import { CustomErrorHandler } from "../services";
 import { UpdateUserSchema, AddressSchema, UserRegisterSchema} from "../validator";
@@ -129,8 +130,8 @@ const UserController = {
     async addAddress(req,res,next){
         
         let add, fetch;
-        let isType = false;
         const userId = req.body.userId;
+        const add_id = mongoose.Types.ObjectId();
 
         if(userId){
 
@@ -154,8 +155,6 @@ const UserController = {
                 return next(CustomErrorHandler.NotAllowed(`type ${type} is not allowed. Value of 'type' should be of Home, Office and Other.`));
             }
 
-            const add_id = Math.floor(Math.random()*(9999999999-100000000+1)+100000000).toString();
-
             // make object named address
             const address = {
                 add_id,
@@ -166,7 +165,6 @@ const UserController = {
                 state,
                 pincode
             }
-
 
             // save data in database 
             try{
@@ -228,24 +226,24 @@ const UserController = {
 
             // make object named address
             const address = {
-                add_id: addressId,
-                type,
-                line,
-                locality,
-                city,
-                state,
-                pincode
+                "address.$.type":type,
+                "address.$.line":line,
+                "address.$.locality":locality,
+                "address.$.city":city,
+                "address.$.state":state,
+                "address.$.pincode":pincode
             }
 
             // save data in database 
             try{
-                    // remove existing array
-                    remove = await User.findOneAndUpdate({ _id: userId },{ $pull: { address: { add_id: addressId }}});
-                    if(!remove){
-                        return next(CustomErrorHandler.NotFound("No User Available With This ID."));
-                    } 
-        
-                    update = await User.findOneAndUpdate({ _id: userId },{ $push: { address }});
+
+                //new testing
+                update = await User.findOneAndUpdate({ "address.add_id": ObjectId(addressId)},{
+                    $set:{
+                        address
+                    }
+                });
+
                     if (!update) {
                         return next(CustomErrorHandler.NotFound("No User Available With This ID."));
                     }
@@ -286,7 +284,7 @@ const UserController = {
 
             try{
                 // remove existing array
-                remove = await User.findOneAndUpdate({ _id: userId },{ $pull: { address: { add_id: addressId }}});
+                remove = await User.findOneAndUpdate({ _id: userId },{ $pull: { address: { add_id: ObjectId(addressId) }}});
                 if(!remove){
                     return next(CustomErrorHandler.NotValid(" `addressId` is not available for this userId"));
                 } 
